@@ -8,10 +8,10 @@ CREATE TABLE Contacts (
   street_name VARCHAR(250) NOT NULL,
   city_name VARCHAR(250) NOT NULL,
   state_name VARCHAR(250) NOT NULL,
-  zip_code VARCHAR(5) NOT NULL,
-  home_phone VARCHAR(10) DEFAULT NULL,
-  work_phone VARCHAR(10) DEFAULT NULL,
-  mobile_phone VARCHAR(10) DEFAULT NULL,
+  zip_code VARCHAR(250) NOT NULL,
+  home_phone VARCHAR(250) DEFAULT NULL,
+  work_phone VARCHAR(250) DEFAULT NULL,
+  mobile_phone VARCHAR(250) DEFAULT NULL,
   email_address VARCHAR(250) NOT NULL
 );
 

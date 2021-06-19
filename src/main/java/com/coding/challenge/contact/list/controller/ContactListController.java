@@ -33,13 +33,13 @@ public class ContactListController {
     @GetMapping("")
     public ResponseEntity<ContactListResponseV2> getContactList(
             @Valid @RequestBody final String contactListRequestJson){
-        return contactListService.processContactListRetrieval(contactListRequestJson, null);
+        return contactListService.processContactListRetrieval( null);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ContactListResponseV2> getContactById(
             @Valid @RequestBody final String contactListRequestJson, @PathVariable ("id") String id) {
-        return contactListService.processContactListRetrieval(contactListRequestJson, id);
+        return contactListService.processContactListRetrieval(id);
     }
 
     @PutMapping("/{id}")
@@ -53,7 +53,7 @@ public class ContactListController {
     @Transactional
     public ResponseEntity<ContactListResponseV2> deleteContactById(
             @Valid @RequestBody final String contactListRequestJson, @PathVariable ("id") String id) {
-        return contactListService.processContactListDelete(contactListRequestJson, id);
+        return contactListService.processContactListDelete(id);
     }
 
     @PostMapping("")
@@ -65,7 +65,7 @@ public class ContactListController {
     @GetMapping("/call-list")
     public ResponseEntity<CallListResponse> responseCallList(
             @Valid @RequestBody final String contactListRequestJson){
-        return callListService.processCallListRetrieval(contactListRequestJson);
+        return callListService.processCallListRetrieval();
     }
 
 

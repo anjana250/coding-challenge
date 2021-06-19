@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface CallListService {
 
-    public ResponseEntity<CallListResponse> processCallListRetrieval(String contactListRequestJson);
+    public ResponseEntity<CallListResponse> processCallListRetrieval();
 }

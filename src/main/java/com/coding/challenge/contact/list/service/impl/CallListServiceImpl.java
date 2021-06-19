@@ -27,11 +27,19 @@ public class CallListServiceImpl implements CallListService {
     @Autowired
     private ContactsRepository contactsRepository;
 
+    /**
+     * Generates Call List of all Records in Contacts Table with Home Phone
+     *
+     *
+     *@return  contactListResponse     Return successful or error response
+     */
+
     @Override
-    public ResponseEntity<CallListResponse> processCallListRetrieval(String contactListRequestJson){
+    public ResponseEntity<CallListResponse> processCallListRetrieval(){
         CallListResponse callListResponse= new CallListResponse();
         List<Contacts> contactsArrayList= contactsRepository.findAllWithHomePhone();
         if(contactsArrayList!=null && !contactsArrayList.isEmpty()){
+            //Order Call List  Alphabetically Last Name then First Name
             if(contactsArrayList.size()>1){
                 Collections.sort(contactsArrayList, DataComparator.Contacts_Alphabetical_Comparator);
             }
@@ -40,6 +48,8 @@ public class CallListServiceImpl implements CallListService {
         return ResponseEntity.ok().headers(headers).body(callListResponse);
     }
 
+
+    //Creates the Call List Response
     private CallListResponse populateCallListResponse(CallListResponse callListResponse,List<Contacts> contactsArrayList){
         List<Call> callList = new ArrayList<>();
         for(Contacts contact: contactsArrayList){

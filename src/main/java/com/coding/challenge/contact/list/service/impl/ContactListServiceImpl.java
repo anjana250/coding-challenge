@@ -21,7 +21,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,20 +36,44 @@ public class ContactListServiceImpl implements ContactListService {
     @Autowired
     private ContactsRepository contactsRepository;
 
-
+    /**
+     * Create Request Object and Insert new record in the Contacts Table
+     *
+     * @param  contactListRequestJson   Request JSON with Data to be inserted into Contacts Table
+     * @return  contactListResponse     Return successful or error response
+     */
     @Override
     public ResponseEntity<ContactListResponseV2> processContactListInsert(String contactListRequestJson)  {
         ContactListResponseV2 contactListResponse= new ContactListResponseV2();
         if(isJsonValid(contactListRequestJson)) {
             ContactListRequest contactListRequest = createRequest(contactListRequestJson);
-            saveUpdateContact(null,contactListRequest);
-            return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Your request has been processed successfully"));
+            if(passInitialValidations(contactListRequest)) {
+                saveUpdateContact(null, contactListRequest);
+                return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Your request has been processed successfully"));
+            } else{
+                return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Your request is not valid"));
+            }
         }
         return ResponseEntity.badRequest().headers(headers).body(ResponseUtils.returnMessage("There was an issue processing your request. Please try again."));
 
     }
 
-    private void saveUpdateContact(Contacts contacts,ContactListRequest request){
+    //Validates that Request Object Contains First Name and Last Name- to prevent those records from being inserted. Also makes sure request object is not null
+    private boolean passInitialValidations(ContactListRequest contactListRequest) {
+        if(contactListRequest!=null && contactListRequest.getName()!=null) {
+            return (StringUtils.isNotNullOrEmpty(contactListRequest.getName().getFirst()) && StringUtils.isNotNullOrEmpty(contactListRequest.getName().getLast()));
+        }
+        return false;
+    }
+
+    /**
+     * Insert or Update record in the Contacts Table
+     *
+     * @param  contacts   Existing Contacts object to be updated
+     * @param  request    Request object with data to insert or update Contacts Table
+     */
+
+    private void saveUpdateContact(@Nullable Contacts contacts, @NotNull ContactListRequest request){
         if(contacts==null) {
             contacts = new Contacts();
         }
@@ -102,8 +128,15 @@ public class ContactListServiceImpl implements ContactListService {
         contactsRepository.save(contacts);
     }
 
+    /**
+     * Deletes record in the Contacts Table
+     *
+     *@param    id                     Id of the Record  to be deleted from Contacts Table
+     *@return  contactListResponse     Return successful or error response
+     */
+
     @Override
-    public ResponseEntity<ContactListResponseV2> processContactListDelete(String contactListRequestJson, String id){
+    public ResponseEntity<ContactListResponseV2> processContactListDelete(String id){
         ContactListResponseV2 contactListResponse = new ContactListResponseV2();
         if (id != null) {
             if (NumberUtils.isInteger(id) && contactsRepository.existsById(Integer.parseInt(id))) {
@@ -119,8 +152,15 @@ public class ContactListServiceImpl implements ContactListService {
         }
     }
 
+    /**
+     * Create Request Object and Update existing record in the Contacts Table
+     *
+     * @param  contactListRequestJson   Request JSON with Data to be inserted into Contacts Table
+     * @return  contactListResponse     Return successful or error response
+     */
+
     @Override
-    public ResponseEntity<ContactListResponseV2> processContactListUpdate(String contactListRequestJson, String id) {
+    public ResponseEntity<ContactListResponseV2> processContactListUpdate(@NotNull String contactListRequestJson, @NotNull String id) {
         ContactListResponseV2 contactListResponse = new ContactListResponseV2();
         if(isJsonValid(contactListRequestJson)) {
             if (id != null) {
@@ -128,13 +168,16 @@ public class ContactListServiceImpl implements ContactListService {
                     Integer idInt= Integer.parseInt(id);
                     if(contactsRepository.existsById(idInt)) {
                         ContactListRequest contactListRequest = createRequest(contactListRequestJson);
-                        Optional<Contacts> previouslySavedContact = contactsRepository.findById(idInt);
-                        if (previouslySavedContact.isPresent()) {
-                            Contacts contact = previouslySavedContact.get();
-                            saveUpdateContact(contact, contactListRequest);
-                            return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Update was successful."));
+                        if(passInitialValidations(contactListRequest)) {
+                            Optional<Contacts> previouslySavedContact = contactsRepository.findById(idInt);
+                            if (previouslySavedContact.isPresent()) {
+                                Contacts contact = previouslySavedContact.get();
+                                saveUpdateContact(contact, contactListRequest);
+                                return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Update was successful."));
+                            }
+                        }else {
+                            return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Your request is not valid"));
                         }
-
                     }
                     else{
                         return ResponseEntity.ok().headers(headers).body(ResponseUtils.returnMessage("Provide an Integer Value that is already in the database"));
@@ -149,8 +192,15 @@ public class ContactListServiceImpl implements ContactListService {
         return ResponseEntity.badRequest().headers(headers).body(ResponseUtils.returnMessage("There was an issue processing your request. Please try again."));
     }
 
+    /**
+     * Deletes record in the Contacts Table
+     *
+     *@param    id                     Id of the Record  to be deleted from Contacts Table- if null return all
+     *@return  contactListResponse     Return successful or error response
+     */
+
     @Override
-    public ResponseEntity<ContactListResponseV2> processContactListRetrieval(String contactListRequestJson, String id){
+    public ResponseEntity<ContactListResponseV2> processContactListRetrieval(@Nullable String id){
         ContactListResponseV2 contactListResponse= new ContactListResponseV2();
         List<Contacts> contactsArrayList= new ArrayList<>();
         if(StringUtils.isNotNullOrEmpty(id)) {
@@ -173,8 +223,7 @@ public class ContactListServiceImpl implements ContactListService {
     }
 
 
-
-
+    //Creates Request Object
     public ContactListRequest createRequest(String requestJson)  {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
         ContactListRequest contactListRequest= null;
@@ -190,6 +239,7 @@ public class ContactListServiceImpl implements ContactListService {
         return contactListRequest;
     }
 
+    //Validates that the JSON received is valid
     private boolean isJsonValid (String requestJson){
         boolean isJsonValid= false;
         try{
@@ -203,5 +253,6 @@ public class ContactListServiceImpl implements ContactListService {
         }
         return isJsonValid;
     }
+
 
 }
