@@ -1,6 +1,6 @@
 # What you need to get started
 - A favorite text editor or IDE (I used IntelliJ)
-- JDK 6 or later
+- JDK 8 or later
 - Gradle Installed (I used version 7.1)
 - Postman
 
@@ -11,7 +11,7 @@ If you have some custom plugins that require you to import your project from the
 2. In the dialog that opens, select a directory containing a Gradle project and click OK.
 IntelliJ IDEA opens and syncs the project in the IDE.
 
-3. Install and Enable the Lombok plugin
+3. Install and Enable the Lombok plugin 
 
 # Instructions on how to run and test project in IntelliJ
 1. After the sync of all gradle dependencies is complete
