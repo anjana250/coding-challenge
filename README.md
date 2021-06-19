@@ -19,7 +19,7 @@ IntelliJ IDEA opens and syncs the project in the IDE.
 3. After application starts, navigate to: http://localhost:8080/h2-console/login.jsp
 4. Put in the password that is in the application.properties file (located: src/main/resources/application.properties). 
 5. Make sure you use the jdbc driver listed in the application.properties 
-spring.datasource.url=jdbc:h2:mem:testdb
+- (spring.datasource.url=jdbc:h2:mem:testdb)
 
 6. Now you can test all of the scenarions in the Code Challenge Document in Postman
 
