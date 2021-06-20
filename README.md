@@ -17,18 +17,27 @@ IntelliJ IDEA opens and syncs the project in the IDE.
 ## Instructions on how to run and test project in IntelliJ
 1. After the sync of all gradle dependencies is complete
 2. Go to Gradle Tasks -> application -> Run  bootRun
-3. After application starts, navigate to: http://localhost:8080/h2-console/login.jsp
-4. Put in the password that is in the application.properties file (located: src/main/resources/application.properties). 
-5. Make sure you use the jdbc driver listed in the application.properties 
-- (spring.datasource.url=jdbc:h2:mem:testdb)
-- Please note that the database gets recreated with each deployment and data will get deleted
+3. After application starts, navigate to:
+```
+ http://localhost:8080/h2-console/login.jsp
+ ```
+4. Put in the password that is in the application.properties file
+``` (located: src/main/resources/application.properties). ```
+6. Make sure you use the jdbc driver listed in the application.properties 
+ ```
+spring.datasource.url=jdbc:h2:mem:testdb
+```
+**Please note that the database gets recreated with each deployment and data will get deleted**
 
 ## Instructions on how to use the API
 
 Default bootRun script in Spring uses localhost and port 8080. In case you wish to change the port, modify application.properties as below
+```
 server.port=8081
+```
 
 Use Postman or a similar tool to test the API. Here are the links for reference:
+
 | HTTP   |  Method Route | Description | 
 | ------------- | ------------- | ------------- |
 | GET | http://localhost:8080/contacts |  List all contacts|
@@ -41,7 +50,7 @@ Use Postman or a similar tool to test the API. Here are the links for reference:
 
 3. First Name and Last Name are mandatory fields. If a create request does not provide any of these required values, an invalid request error message is returned. You will also get this error if there are other issues with the JSON request such as the phone number type is invalid. This is only applicable for POST and PUT
  
-4. For GET by ID, DELETE by ID and PUT by ID, you will get an error if you attempt to send an ID value that is not an integer OR not an integer that already exists in the database.
+4. For GET by ID, DELETE by ID and PUT by ID, you will get an error message if you attempt to send an ID value that is not an integer OR not an integer that already exists in the database.
 
 
 ## Instructions on how to import gradle project in Eclipse
