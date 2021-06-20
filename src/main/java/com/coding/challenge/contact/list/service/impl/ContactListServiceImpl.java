@@ -44,7 +44,6 @@ public class ContactListServiceImpl implements ContactListService {
      */
     @Override
     public ResponseEntity<ContactListResponseV2> processContactListInsert(String contactListRequestJson)  {
-        ContactListResponseV2 contactListResponse= new ContactListResponseV2();
         if(isJsonValid(contactListRequestJson)) {
             ContactListRequest contactListRequest = createRequest(contactListRequestJson);
             if(passInitialValidations(contactListRequest)) {
@@ -137,7 +136,6 @@ public class ContactListServiceImpl implements ContactListService {
 
     @Override
     public ResponseEntity<ContactListResponseV2> processContactListDelete(String id){
-        ContactListResponseV2 contactListResponse = new ContactListResponseV2();
         if (id != null) {
             if (NumberUtils.isInteger(id) && contactsRepository.existsById(Integer.parseInt(id))) {
                 contactsRepository.deleteById(Integer.parseInt(id));
